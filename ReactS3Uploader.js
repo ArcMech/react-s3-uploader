@@ -1,11 +1,11 @@
 "use strict";
 
 var React = require('react'),
-    ReactDOM = require('react-dom'),
-    PropTypes = require('prop-types'),
-    createReactClass = require('create-react-class'),
-    S3Upload = require('./s3upload.js'),
-    objectAssign = require('object-assign');
+  ReactDOM = require('react-dom'),
+  PropTypes = require('prop-types'),
+  createReactClass = require('create-react-class'),
+  S3Upload = require('./s3upload.js'),
+  objectAssign = require('object-assign');
 
 var ReactS3Uploader = createReactClass({
 
@@ -49,7 +49,7 @@ var ReactS3Uploader = createReactClass({
                 console.log('Upload progress: ' + percent + '% ' + message);
             },
             onFinish: function(signResult) {
-                console.log("Upload finished: " + signResult.publicUrl)
+                console.log("Upload finished: " + signResult)
             },
             onError: function(message) {
                 console.log("Upload error: " + message);

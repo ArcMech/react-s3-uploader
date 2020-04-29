@@ -11,6 +11,7 @@ S3Upload.prototype.fileElement = null;
 S3Upload.prototype.files = null;
 
 S3Upload.prototype.onFinishS3Put = function(signResult, file) {
+    console.log(signResult, file)
     return console.log('base.onFinishS3Put()', signResult.publicUrl);
 };
 
@@ -89,7 +90,7 @@ S3Upload.prototype._getErrorRequestContext = function (xhr) {
 
 S3Upload.prototype.executeOnSignedUrl = function(file, callback) {
     var fileName = this.scrubFilename(file.name);
-    var queryString = '?objectName=' + fileName + '&contentType=' + encodeURIComponent(file.type);
+    var queryString = '?filename=' + fileName + '&contentType=' + encodeURIComponent(file.type);
     if (this.s3path) {
         queryString += '&path=' + encodeURIComponent(this.s3path);
     }
@@ -137,14 +138,14 @@ S3Upload.prototype.executeOnSignedUrl = function(file, callback) {
 };
 
 S3Upload.prototype.uploadToS3 = function(file, signResult) {
-    var xhr = this.createCORSRequest('PUT', signResult.signedUrl);
+    var xhr = this.createCORSRequest('PUT', signResult.url);
     if (!xhr) {
         this.onError('CORS not supported', file, {});
     } else {
         xhr.onload = function() {
             if (this.successResponses.indexOf(xhr.status) >= 0) {
                 this.onProgress(100, 'Upload completed', file);
-                return this.onFinishS3Put(signResult, file);
+                return this.onFinishS3Put(signResult.url, file);
             } else {
                 return this.onError(
                     'Upload error: ' + xhr.status,
@@ -204,7 +205,6 @@ S3Upload.prototype.uploadToS3 = function(file, signResult) {
 
 S3Upload.prototype.uploadFile = function(file) {
     var uploadToS3Callback = this.uploadToS3.bind(this, file);
-
     if(this.getSignedUrl) return this.getSignedUrl(file, uploadToS3Callback);
     return this.executeOnSignedUrl(file, uploadToS3Callback);
 };
